@@ -36,9 +36,15 @@ PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, bool use
 void PIDStepper::run() 
 {
   if (_useEncoder)
-    _pidInput = _motor->getEncoderPosition();
+  {
+    float encoderPos = _motor->getEncoderPosition();
+    _motor->setCurrentPosition(encoderPos, false); // Correct internal actual position with encoder position (/!\ may glitch at high speed ?)
+    _pidInput = encoderPos;
+  }
   else
+  {
     _pidInput = _motor->getCurrentPosition();
+  }
 
   if (_pid.Compute())
     _motor->setMaxSpeed(_pidOutput);

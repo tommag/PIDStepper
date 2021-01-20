@@ -1,3 +1,4 @@
+# PIDStepper Arduino library
 This library is used to control a TMC5160 stepper motor driver by Trinamic, integrating a PID controller to smooth 
 the motor movements while following a stream of target positions.
 It can optionally use an encoder on the motor for the PID input.
@@ -10,5 +11,5 @@ its output is the max allowed speed for the ramp generator.
 The base unit is the motor step.
 
 Requirements : 
-https://github.com/tommag/TMC5160_Arduino
-https://github.com/br3ttb/Arduino-PID-Library
+* https://github.com/tommag/TMC5160_Arduino
+* https://github.com/br3ttb/Arduino-PID-Library

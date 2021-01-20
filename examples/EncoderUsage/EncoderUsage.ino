@@ -70,6 +70,7 @@ void setup()
   SPI.begin();
   motor.begin(powerStageParams, motorParams, TMC5160::NORMAL_MOTOR_DIRECTION);
   motor.setEncoderResolution(200, 4000, false);
+  motor.setEncoderAllowedDeviation(1);
 
   // ramp definition
   motor.setRampMode(TMC5160::POSITIONING_MODE);

@@ -37,11 +37,17 @@ void PIDStepper::run()
 {
   if (_useEncoder && _motor->isEncoderDeviationDetected())
   {
-    _motor->setCurrentPosition(_motor->getEncoderPosition(), false); // Correct internal actual position with encoder position (/!\ may glitch at high speed ?)
-    _motor->clearEncoderDeviationFlag();
+    float encoderPos = _motor->getEncoderPosition();
+    if (encoderPos != NAN)
+    {
+      _motor->setCurrentPosition(encoderPos, false); // Correct internal actual position with encoder position (/!\ may glitch at high speed ?)
+      _motor->clearEncoderDeviationFlag();
+    }
   }
 
-  _pidInput = _motor->getCurrentPosition();
+  float currentPosition = _motor->getCurrentPosition();
+  if (currentPosition != NAN)
+    _pidInput = currentPosition;
 
   if (_pid.Compute())
     _motor->setMaxSpeed(_pidOutput);

@@ -30,7 +30,7 @@ PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, bool use
   _pid(&_pidInput, &_pidOutput, &_pidSetpoint, Kp, Ki, Kd, P_ON_E, DIRECT)
 {
   _pid.SetMode(AUTOMATIC);
-  _pid.SetSampleTime(1); // Compute at 1000Hz
+  _pid.SetSampleTime(10); // Compute at 100Hz
 }
 
 void PIDStepper::run() 

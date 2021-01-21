@@ -27,10 +27,9 @@ SOFTWARE.
 PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, bool useEncoder) :
   _motor(&motor),
   _useEncoder(useEncoder),
-  _pid(&_pidInput, &_pidOutput, &_pidSetpoint, Kp, Ki, Kd, P_ON_E, DIRECT)
+  _pid(Kp,Ki,Kd)
 {
-  _pid.SetMode(AUTOMATIC);
-  _pid.SetSampleTime(10); // Compute at 100Hz
+
 }
 
 void PIDStepper::run() 
@@ -47,15 +46,15 @@ void PIDStepper::run()
 
   float currentPosition = _motor->getCurrentPosition();
   if (currentPosition != NAN)
-    _pidInput = currentPosition;
-
-  if (_pid.Compute())
+  {
+    _pidOutput = _pid.getCmdAutoStep(_pidSetpoint, currentPosition);
     _motor->setMaxSpeed(_pidOutput);
+  }
 }
 
 void PIDStepper::setMaxSpeed(float maxSpeed_steps_s)
 {
-  _pid.SetOutputLimits(-abs(maxSpeed_steps_s), abs(maxSpeed_steps_s));
+  _pid.setCmdRange(-abs(maxSpeed_steps_s), abs(maxSpeed_steps_s));
 }
 
 void PIDStepper::setTargetPosition(float targetPos_steps)
@@ -66,7 +65,7 @@ void PIDStepper::setTargetPosition(float targetPos_steps)
 
 void PIDStepper::setGains(double Kp, double Ki, double Kd)
 {
-  _pid.SetTunings(Kp, Ki, Kd);
+  _pid.setGains(Kp, Ki, Kd);
 }
 
 float PIDStepper::getSpeed()

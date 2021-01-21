@@ -37,7 +37,7 @@ void PIDStepper::run()
   if (_useEncoder && _motor->isEncoderDeviationDetected())
   {
     float encoderPos = _motor->getEncoderPosition();
-    if (encoderPos != NAN)
+    if (!isnan(encoderPos))
     {
       _motor->setCurrentPosition(encoderPos, false); // Correct internal actual position with encoder position (/!\ may glitch at high speed ?)
       _motor->clearEncoderDeviationFlag();
@@ -45,7 +45,7 @@ void PIDStepper::run()
   }
 
   float currentPosition = _motor->getCurrentPosition();
-  if (currentPosition != NAN)
+  if (!isnan(currentPosition))
   {
     _pidOutput = _pid.getCmdAutoStep(_pidSetpoint, currentPosition);
     _motor->setMaxSpeed(_pidOutput);
@@ -59,6 +59,9 @@ void PIDStepper::setMaxSpeed(float maxSpeed_steps_s)
 
 void PIDStepper::setTargetPosition(float targetPos_steps)
 {
+  if (isnan(targetPos_steps))
+    return;
+
   _motor->setTargetPosition(targetPos_steps);
   _pidSetpoint = targetPos_steps;
 }

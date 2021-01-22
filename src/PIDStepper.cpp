@@ -26,6 +26,7 @@ SOFTWARE.
 
 PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, bool useEncoder) :
   _useEncoder(useEncoder),
+  _motor(motor),
   _pid(&_pidInput, &_pidOutput, &_pidSetpoint, Kp, Ki, Kd, P_ON_E, DIRECT)
 {
   _pid.SetMode(AUTOMATIC);

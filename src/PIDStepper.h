@@ -28,11 +28,12 @@ SOFTWARE.
 #include <Arduino.h>
 #include <TMC5160.h>
 #include <PID_v1.h>
+#include <Ramp.h>
 
 class PIDStepper {
 public:
   /* Initialize library with PID gains */
-  PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, bool useEncoder = false);
+  PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, unsigned int inputSmoothDur_ms, bool useEncoder = false);
 
   /* Call this function as frequently as possible, preferably in the main loop */
   void run();
@@ -54,6 +55,8 @@ private:
   TMC5160 *_motor;
   double _pidSetpoint, _pidInput, _pidOutput;
   PID _pid;
+  rampFloat _setPointInterpolator;
+  unsigned int _inputSmoothDuration_ms;
 };
 
 

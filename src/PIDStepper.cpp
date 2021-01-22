@@ -24,13 +24,16 @@ SOFTWARE.
 
 #include "PIDStepper.h"
 
-PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, bool useEncoder) :
+PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, unsigned int inputSmoothDur_ms, bool useEncoder) :
   _useEncoder(useEncoder),
   _motor(&motor),
-  _pid(&_pidInput, &_pidOutput, &_pidSetpoint, Kp, Ki, Kd, P_ON_E, DIRECT)
+  _pid(&_pidInput, &_pidOutput, &_pidSetpoint, Kp, Ki, Kd, P_ON_E, DIRECT),
+  _inputSmoothDuration_ms(inputSmoothDur_ms)
 {
   _pid.SetMode(AUTOMATIC);
   _pid.SetSampleTime(1000 / updateRate_Hz);
+  
+  _setPointInterpolator.setGrain(1);
 }
 
 void PIDStepper::run() 
@@ -49,8 +52,13 @@ void PIDStepper::run()
   if (!isnan(currentPosition))
     _pidInput = currentPosition;
 
+  _setPointInterpolator.update();  
+  _pidSetpoint = _setPointInterpolator.getValue();
   if (_pid.Compute())
+  {
+    _motor->setTargetPosition(_pidSetpoint);
     _motor->setMaxSpeed(_pidOutput);
+  }
 }
 
 void PIDStepper::setMaxSpeed(float maxSpeed_steps_s)
@@ -63,8 +71,7 @@ void PIDStepper::setTargetPosition(float targetPos_steps)
   if (isnan(targetPos_steps))
     return;
 
-  _motor->setTargetPosition(targetPos_steps);
-  _pidSetpoint = targetPos_steps;
+  _setPointInterpolator.go(targetPos_steps, _inputSmoothDuration_ms, QUADRATIC_INOUT);
 }
 
 void PIDStepper::setGains(double Kp, double Ki, double Kd)

@@ -44,12 +44,6 @@ void PIDStepper::run()
     }
   }
 
-  unsigned long currentTime = micros();
-  if (currentTime - _lastUpdateTime < _updatePeriod_us)
-    return;
-
-  _lastUpdateTime = currentTime;
-
   float currentPosition = _motor->getCurrentPosition();
   if (!isnan(currentPosition))
     _pidInput = currentPosition;

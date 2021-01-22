@@ -50,12 +50,31 @@ void PIDStepper::run()
     _pidInput = currentPosition;
 
   if (_pid.Compute())
+  {
     _motor->setMaxSpeed(_pidOutput);
+
+    /*Serial.print("PID input: ");
+    Serial.println(_pidInput);
+    Serial.print("PID setpoint: ");
+    Serial.println(_pidSetpoint);
+    Serial.print("PID output: ");
+    Serial.println(_pidOutput); */
+  }
 }
 
 void PIDStepper::setMaxSpeed(float maxSpeed_steps_s)
 {
-  _pid.SetOutputLimits(-abs(maxSpeed_steps_s), abs(maxSpeed_steps_s));
+  if (maxSpeed_steps_s == 0.0f) 
+  {
+    _pid.SetMode(MANUAL);
+    _pidOutput = 0.0;
+    _motor->stop();
+  }
+  else
+  {
+    _pid.SetMode(AUTOMATIC);
+    _pid.SetOutputLimits(-abs(maxSpeed_steps_s), abs(maxSpeed_steps_s));
+  }
 }
 
 void PIDStepper::setTargetPosition(float targetPos_steps)

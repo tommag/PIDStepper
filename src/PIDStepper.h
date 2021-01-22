@@ -27,7 +27,7 @@ SOFTWARE.
 
 #include <Arduino.h>
 #include <TMC5160.h>
-#include <TimedPID.h>
+#include <PID_v1.h>
 
 class PIDStepper {
 public:
@@ -52,10 +52,8 @@ public:
 private:
   bool _useEncoder;
   TMC5160 *_motor;
-  TimedPID _pid;
-  float _pidSetpoint, _pidOutput;
-  unsigned long _updatePeriod_us;
-  unsigned long _lastUpdateTime;
+  double _pidSetpoint, _pidInput, _pidOutput;
+  PID _pid;
 };
 
 

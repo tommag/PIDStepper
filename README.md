@@ -12,4 +12,4 @@ The base unit is the motor step.
 
 Requirements : 
 * https://github.com/tommag/TMC5160_Arduino
-* https://github.com/DrGFreeman/TimedPID
+* https://github.com/br3ttb/Arduino-PID-Library

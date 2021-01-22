@@ -49,7 +49,7 @@ const uint8_t SPI_CS = 5; // CS pin in SPI mode
 const uint8_t SPI_DRV_ENN = 8;  // DRV_ENN pin in SPI mode
 
 TMC5160_SPI motor = TMC5160_SPI(SPI_CS); //Use default SPI peripheral and SPI settings.
-PIDStepper pidController = PIDStepper(motor, 10, 1, 0, true);
+PIDStepper pidController = PIDStepper(motor, 10, 1, 0, 100, true);
 
 
 void setup()

@@ -32,7 +32,7 @@ SOFTWARE.
 class PIDStepper {
 public:
   /* Initialize library with PID gains */
-  PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, bool useEncoder = false);
+  PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, bool useEncoder = false);
 
   /* Call this function as frequently as possible, preferably in the main loop */
   void run();
@@ -54,6 +54,8 @@ private:
   TMC5160 *_motor;
   TimedPID _pid;
   float _pidSetpoint, _pidOutput;
+  unsigned long _updatePeriod_us;
+  unsigned long _lastUpdateTime;
 };
 
 

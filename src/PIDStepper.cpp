@@ -24,12 +24,12 @@ SOFTWARE.
 
 #include "PIDStepper.h"
 
-PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, bool useEncoder) :
-  _motor(&motor),
+PIDStepper::PIDStepper(TMC5160& motor, double Kp, double Ki, double Kd, unsigned int updateRate_Hz, bool useEncoder) :
   _useEncoder(useEncoder),
+  _motor(&motor),
   _pid(Kp,Ki,Kd)
 {
-
+  _updatePeriod_us = 1000000ul / updateRate_Hz;
 }
 
 void PIDStepper::run() 
@@ -43,6 +43,12 @@ void PIDStepper::run()
       _motor->clearEncoderDeviationFlag();
     }
   }
+
+  unsigned long currentTime = micros();
+  if (currentTime - _lastUpdateTime < _updatePeriod_us)
+    return;
+
+  _lastUpdateTime = currentTime;
 
   float currentPosition = _motor->getCurrentPosition();
   if (!isnan(currentPosition))
